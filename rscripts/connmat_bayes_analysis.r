@@ -4,13 +4,10 @@
 # ROI pair using paired Bayesian t-tests from the BayesFactor package, then
 # plots the resulting log10 Bayes factor matrices.
 #
-# Input:  connMatrices, a 38 x 38 x 146 array (ROI x ROI x scan) in a MATLAB
-#         v7.3 .mat file. Scans 1:73 are BE and 74:146 are IS, with the same
-#         subjects in the same order.
+# Input:  connMatrices, a numeric ROI x ROI x scan array in a MATLAB v7.3
+#         .mat file. The first half of the scans must be BE and the second
+#         half IS, with the same subjects in the same order.
 # Output: BF01 and BF10 matrices, heatmaps, and optional CSV files.
-#
-# Author: Julian Bandhan
-# Updated: 2026-09-02
 #
 # Run from the repository root. Update the paths below to match your data.
 
@@ -23,7 +20,7 @@ library(ggplot2)
 
 data_dir    <- "data"
 results_dir <- "results"
-mat_file    <- file.path(data_dir, "BEbIS_ConnMat_lowBB_v73.mat")
+mat_file    <- file.path(data_dir, "BEvIS_ConnMat_file.mat")
 
 
 # Load data ---------------------------------------------------------------
@@ -31,17 +28,17 @@ mat_file    <- file.path(data_dir, "BEbIS_ConnMat_lowBB_v73.mat")
 # List the file contents to confirm the dataset name
 h5ls(mat_file)
 
-M <- h5read(mat_file, "/connMatrices")
+M <- h5read(mat_file, "/connMatrices") # .mat file must contain a numeric 3D array named connMatrices
 
 n_roi  <- dim(M)[1]        # number of ROIs
 n_pair <- dim(M)[3] / 2    # number of subjects
-stopifnot(dim(M)[3] == 2 * n_pair)
+stopifnot(dim(M)[3] %% 2 == 0)
 
 be_idx <- 1:n_pair                 # BabyEinsteins slices
 is_idx <- n_pair + (1:n_pair)      # Inscapes slices
 
 # Row and column indices of each unique ROI pair
-edges <- which(upper.tri(matrix(0, n_roi, n_roi)), arr.ind = TRUE)  # ROI*(ROI-1) x 2
+edges <- which(upper.tri(matrix(0, n_roi, n_roi)), arr.ind = TRUE)  # ROI*(ROI-1)/2 x 2
 
 
 # Paired Bayes factors ----------------------------------------------------
@@ -76,8 +73,6 @@ BF10[lower.tri(BF10)] <- t(BF10)[lower.tri(BF10)]  # mirror to full symmetric ma
 df <- expand.grid(i = 1:n_roi, j = 1:n_roi)
 df$log10BF01 <- log10(as.vector(BF01))          # column-major, aligns with expand.grid
 df$log10BF10 <- log10(as.vector(BF10))
-df$normBF10 <- as.vector(BF10)
-df$normBF01 <- as.vector(BF01)
 
 # log10 BF01 heatmap: positive values favour no difference between tasks
 ggplot(df, aes(x = j, y = i, fill = log10BF01)) +
@@ -113,7 +108,7 @@ ggplot(df, aes(x = j, y = i, fill = log10BF10)) +
 
 # Uncomment to write the matrices to results_dir
 # dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
-# write.csv(BF01,        file.path(results_dir, "BEbIS_BF01.csv"),      row.names = FALSE)
-# write.csv(BF10,        file.path(results_dir, "BEbIS_BF10.csv"),      row.names = FALSE)
-# write.csv(log10(BF01), file.path(results_dir, "BEbIS_log10BF01.csv"), row.names = FALSE)
-# write.csv(log10(BF10), file.path(results_dir, "BEbIS_log10BF10.csv"), row.names = FALSE)
+# write.csv(BF01,        file.path(results_dir, "BEvIS_BF01.csv"),      row.names = FALSE)
+# write.csv(BF10,        file.path(results_dir, "BEvIS_BF10.csv"),      row.names = FALSE)
+# write.csv(log10(BF01), file.path(results_dir, "BEvIS_log10BF01.csv"), row.names = FALSE)
+# write.csv(log10(BF10), file.path(results_dir, "BEvIS_log10BF10.csv"), row.names = FALSE)
