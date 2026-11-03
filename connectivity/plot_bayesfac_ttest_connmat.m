@@ -3,7 +3,7 @@
 % Plots the paired Baby Einstein vs Inscapes Bayes factors as a region x region
 % matrix, then lists the edges with BF10 above a chosen threshold.
 %
-% Input:  BEvIS_BF10.csv and BEvIS_log10BF10.csv, saved by BEvIS_paired_BF.R
+% Input:  BEvIS_BF10.csv and BEvIS_log10BF10.csv, saved by connmat_bayes_analysis.r
 %         A tab-delimited label file with one region name per line, in the
 %         same order as the matrix
 % Output: Matrix figure and a table of edges printed to the command window

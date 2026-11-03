@@ -9,7 +9,7 @@
 % task it produces:
 %   - Node and edge files and a BrainNet Viewer plot of the NBS network
 % Across tasks it produces:
-%   - A matched connectivity file for BEvIS_paired_BF.R
+%   - A matched connectivity file for connmat_bayes_analysis.r
 %   - Network strength vs age plots for the BE-derived and IS-derived networks,
 %     with connectivity over each network's edges computed from both tasks
 %   - A linear model of connectivity on age for each task, and a linear mixed
@@ -198,7 +198,7 @@ if any(abs(age_common - age_check) > 0.5)
     warning('Age mismatch >0.5 between tasks for some common subjects. Check alignment and session dates.');
 end
 
-% Save the matched matrices for BEvIS_paired_BF.R, with BE first and IS second
+% Save the matched matrices for connmat_bayes_analysis.r, with BE first and IS second
 connMatrices = cat(3, tasks(1).connMatrices(:,:,tasks(1).common_idx), ...
     tasks(2).connMatrices(:,:,tasks(2).common_idx));
 if ~exist('data', 'dir'), mkdir('data'); end
