@@ -1,0 +1,16 @@
+# Data and participant information
+*.cMEG
+*.mat
+*.csv
+*.xlsx
+*.npy
+*.pkl
+*.nii
+*.nii.gz
+
+# Temporary files
+__pycache__/
+.spyproject/
+*.asv
+.Rhistory
+.RData
